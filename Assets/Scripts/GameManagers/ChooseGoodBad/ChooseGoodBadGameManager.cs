@@ -19,7 +19,7 @@ public class ChooseGoodBadGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
-        roundsCounterTMP.text = "Раунд: " + dataManager.Counter + " / " + dataManager.Rounds;
+        initRounds();
 
         initiateCard();
 
@@ -72,17 +72,7 @@ public class ChooseGoodBadGameManager : BasicGameManager
 
         card.GetComponent<Image>().sprite = spriteManager.CardSuccess;
 
-
-        dataManager.countRounds();
-
-        roundsCounterTMP.text = "Раунд: " + dataManager.Counter + " / " + dataManager.Rounds;
-
-        if (dataManager.checkRounds())
-        {
-            gameOverPanel.SetActive(true);
-
-            GameOver = true;
-        }
+        countRounds();
 
         resetButton.SetActive(!GameOver);
         refreshButton.SetActive(false);

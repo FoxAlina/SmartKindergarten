@@ -13,7 +13,6 @@ public class SilhouettesGameManager : BasicGameManager
     public float distance = 10.0f;
 
     List<Vector2> initialSilhouettePositions;
-    List<Vector2> initialSilhouetteHolderPositions;
 
     public List<GameObject> SilhouetteHolders
     {
@@ -31,36 +30,28 @@ public class SilhouettesGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        initRounds();
+
+        cleanOutlines();
         initInitialSilhouettePositions();
         instantiateSilhouettes();
     }
 
     public void refreshSilhouettes()
     {
-        foreach (var sh in silhouetteHolders)
-        {
-            sh.GetComponent<Outline>().effectColor = new Color32(30, 30, 30, 255);
-        }
-
+        cleanOutlines();
         setSilhouettesToIntialPositions();
-
         instantiateSilhouettes();
+        refreshSetSilhouettes();
     }
 
-    private void initInitialSilhouettePositions()
+    protected void initInitialSilhouettePositions()
     {
         initialSilhouettePositions = new List<Vector2>();
 
         foreach (var silhouette in silhouettes)
         {
             initialSilhouettePositions.Add(silhouette.GetComponent<RectTransform>().anchoredPosition);
-        }
-
-        initialSilhouetteHolderPositions = new List<Vector2>();
-
-        foreach (var silhouetteHolder in silhouetteHolders)
-        {
-            initialSilhouetteHolderPositions.Add(silhouetteHolder.GetComponent<RectTransform>().anchoredPosition);
         }
     }
 
@@ -70,14 +61,9 @@ public class SilhouettesGameManager : BasicGameManager
         {
             silhouettes[i].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i];
         }
-
-        for (int i = 0; i < initialSilhouetteHolderPositions.Count; i++)
-        {
-            silhouetteHolders[i].GetComponent<RectTransform>().anchoredPosition = initialSilhouetteHolderPositions[i];
-        }
     }
 
-    private void instantiateSilhouettes()
+    protected void instantiateSilhouettes()
     {
         Sprite sprite;
         RectTransform rectTransformLocal;
@@ -98,8 +84,102 @@ public class SilhouettesGameManager : BasicGameManager
             rectTransformLocal = silhouetteHolders[i].GetComponent<RectTransform>();
             rectTransformLocal.sizeDelta = new Vector2(rectTransformLocal.sizeDelta.x / spriteManager.SilhouettesScaleFactor,
                                                        rectTransformLocal.sizeDelta.y / spriteManager.SilhouettesScaleFactor);
+            float deltaX = 0.82f
+                + ((SilhouetteHolders[i].GetComponent<Image>().material.GetFloat("_Thickness")) / SilhouetteHolders[i].GetComponent<RectTransform>().sizeDelta.x);
+            float deltaY = 0.89f
+                + ((SilhouetteHolders[i].GetComponent<Image>().material.GetFloat("_Thickness")) / SilhouetteHolders[i].GetComponent<RectTransform>().sizeDelta.y);
+            rectTransformLocal.sizeDelta = new Vector2(rectTransformLocal.sizeDelta.x * deltaX,
+                                                       rectTransformLocal.sizeDelta.y * deltaY);
             silhouetteHolders[i].GetComponent<SilhouetteHolder>().LinkedSilhouetteName = silhouettes[i].gameObject.name;
         }
+    }
+
+    private void refreshSetSilhouettes()
+    {
+        foreach (var sl in silhouettes)
+        {
+            sl.GetComponent<Silhouette>().SetSilhouetteHolderName = string.Empty;
+        }
+
+        foreach (var sh in silhouetteHolders)
+        {
+            sh.GetComponent<SilhouetteHolder>().SetSilhouetteName = string.Empty;
+        }
+    }
+
+    protected void cleanOutlines()
+    {
+        foreach (var sh in silhouetteHolders)
+        {
+            setOutlineGeneralColor(sh.GetComponent<Image>().material);
+        }
+    }
+
+    public void checkAnswers()
+    {
+        bool success = true;
+
+        foreach (var sh in silhouetteHolders)
+        {
+            if (sh.GetComponent<SilhouetteHolder>().SetSilhouetteName == sh.GetComponent<SilhouetteHolder>().LinkedSilhouetteName)
+            {
+                setOutlineSuccessColor(sh.GetComponent<Image>().material);
+            }
+            else
+            {
+                setOutlineFailColor(sh.GetComponent<Image>().material);
+
+                success = false;
+            }
+        }
+
+        if (success)
+        {
+            countRounds();
+
+            playSuccessAudio();
+
+            checkButton.SetActive(false);
+            refreshButton.SetActive(false);
+            resetButton.SetActive(!GameOver);
+        }
+        else
+        {
+            playFailAudio();
+        }
+    }
+
+    public void restart()
+    {
+        refreshSilhouettes();
+
+        checkButton.SetActive(true);
+        refreshButton.SetActive(true);
+        resetButton.SetActive(false);
+    }
+
+    public static void setOutlineSetColor(Material _material)
+    {
+        //sh.GetComponent<Outline>().effectColor = new Color32(65, 160, 234, 255);
+        _material.SetColor("_SolidOutline", new Color(0.254902f, 0.627451f, 0.9176471f, 1f));
+    }
+
+    public static void setOutlineGeneralColor(Material _material)
+    {
+        //sh.GetComponent<Outline>().effectColor = new Color32(30, 30, 30, 255);
+        _material.SetColor("_SolidOutline", new Color(0.1176471f, 0.1176471f, 0.1176471f, 1f));
+    }
+
+    public static void setOutlineSuccessColor(Material _material)
+    {
+        //sh.GetComponent<Outline>().effectColor = new Color32(65, 160, 234, 255);
+        _material.SetColor("_SolidOutline", new Color(0.2644187f, 0.9176471f, 0.2549019f, 1f));
+    }
+
+    public static void setOutlineFailColor(Material _material)
+    {
+        //sh.GetComponent<Outline>().effectColor = new Color32(65, 160, 234, 255);
+        _material.SetColor("_SolidOutline", new Color(0.8584906f, 0.2308206f, 0.2478598f, 1f));
     }
 
     public void playCardSetAudio()
@@ -111,6 +191,12 @@ public class SilhouettesGameManager : BasicGameManager
     public void playFailAudio()
     {
         audioSource.clip = failAudioClip;
+        audioSource.Play();
+    }
+
+    public void playSuccessAudio()
+    {
+        audioSource.clip = successAudio;
         audioSource.Play();
     }
 }

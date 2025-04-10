@@ -6,6 +6,8 @@ using UnityEngine;
 public class SpriteManager : MonoBehaviour
 {
     [SerializeField]
+    Sprite defaultSprite;
+    [SerializeField]
     List<Sprite> goodCards;
     [SerializeField]
     List<Sprite> badCards;
@@ -14,7 +16,7 @@ public class SpriteManager : MonoBehaviour
     [SerializeField]
     List<Sprite> badSilhouettes;
     [SerializeField]
-    int silhouettesScaleFactor;
+    int silhouettesScaleFactor = 1;
     [SerializeField]
     Sprite cardHolder;
     [SerializeField]
@@ -24,9 +26,15 @@ public class SpriteManager : MonoBehaviour
     [SerializeField]
     Sprite cardFail;
     [SerializeField]
-    Sprite silhouetteSuccess;
+    List<Sprite> backgroundSprites;
     [SerializeField]
-    Sprite silhouetteFail;
+    List<Sprite> glSuns;
+    [SerializeField]
+    List<Sprite> glHighs;
+    [SerializeField]
+    List<Sprite> glMiddles;
+    [SerializeField]
+    List<Sprite> glLows;
 
     public Sprite CardHolder
     {
@@ -51,16 +59,6 @@ public class SpriteManager : MonoBehaviour
     public Sprite CardFail
     {
         get { return cardFail; }
-    }
-
-    public Sprite SilhouetteSuccess
-    {
-        get { return silhouetteSuccess; }
-    }
-
-    public Sprite SilhouetteFail
-    {
-        get { return silhouetteFail; }
     }
 
     public Sprite getRandomCardSprite(bool _isGood)
@@ -94,6 +92,55 @@ public class SpriteManager : MonoBehaviour
         silhouettes = silhouettes.OrderBy(x => Random.value).ToList();
 
         ret = silhouettes[Random.Range(0, silhouettes.Count)];
+
+        return ret;
+    }
+
+    public Sprite getRandomGLBackgroundSprite()
+    {
+        Sprite ret;
+
+        backgroundSprites = backgroundSprites.OrderBy(x => Random.value).ToList();
+
+        ret = backgroundSprites[Random.Range(0, backgroundSprites.Count)];
+
+        return ret;
+    }
+
+    public Sprite getRandomGLSilhouetteSprite(GoodLandscapeSilhouettes _goodLandscapeSilhouettes)
+    {
+        Sprite ret = defaultSprite;
+
+        switch (_goodLandscapeSilhouettes)
+        {
+            case GoodLandscapeSilhouettes.Sun:
+                glSuns = glSuns.OrderBy(x => Random.value).ToList();
+                ret = glSuns[Random.Range(0, glSuns.Count)];
+                break;
+            case GoodLandscapeSilhouettes.High:
+                glHighs = glHighs.OrderBy(x => Random.value).ToList();
+                ret = glHighs[Random.Range(0, glHighs.Count)];
+                break;
+            case GoodLandscapeSilhouettes.Middle:
+                glMiddles = glMiddles.OrderBy(x => Random.value).ToList();
+                ret = glMiddles[Random.Range(0, glMiddles.Count)];
+                break;
+            case GoodLandscapeSilhouettes.Low:
+                glLows = glLows.OrderBy(x => Random.value).ToList();
+                ret = glLows[Random.Range(0, glLows.Count)];
+                break;
+        }
+
+        return ret;
+    }
+
+    public Sprite getRandomBackgroundSprite()
+    {
+        Sprite ret;
+
+        backgroundSprites = backgroundSprites.OrderBy(x => Random.value).ToList();
+
+        ret = backgroundSprites[Random.Range(0, backgroundSprites.Count)];
 
         return ret;
     }

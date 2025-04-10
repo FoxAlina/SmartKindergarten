@@ -29,4 +29,22 @@ public class BasicGameManager : MonoBehaviour
 
     public bool GameOver { get; set; }
 
+    public void initRounds()
+    {
+        roundsCounterTMP.text = "Раунд: " + dataManager.Counter + " / " + dataManager.Rounds;
+    }
+
+    public void countRounds()
+    {
+        dataManager.countRounds();
+
+        roundsCounterTMP.text = "Раунд: " + dataManager.Counter + " / " + dataManager.Rounds;
+
+        if (dataManager.checkRounds())
+        {
+            gameOverPanel.SetActive(true);
+
+            GameOver = true;
+        }
+    }
 }

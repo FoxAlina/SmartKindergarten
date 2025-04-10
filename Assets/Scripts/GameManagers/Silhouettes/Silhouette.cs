@@ -33,7 +33,10 @@ public class Silhouette : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             if (setSilhouetteHolderName == sh.gameObject.name
              && sh.GetComponent<SilhouetteHolder>().SetSilhouetteName == this.gameObject.name)
             {
-                sh.GetComponent<Outline>().effectColor = new Color32(30, 30, 30, 255);
+                //sh.GetComponent<Outline>().effectColor = new Color32(30, 30, 30, 255);
+                //sh.GetComponent<Image>().material.SetColor("_SolidOutline", new Color(0.1176471f, 0.1176471f, 0.1176471f, 1f));
+                SilhouettesGameManager.setOutlineGeneralColor(sh.GetComponent<Image>().material);
+                
 
                 sh.GetComponent<SilhouetteHolder>().SetSilhouetteName = string.Empty;
 
@@ -62,7 +65,9 @@ public class Silhouette : MonoBehaviour, IBeginDragHandler, IEndDragHandler
                 {
                     GetComponent<RectTransform>().anchoredPosition = sh.GetComponent<RectTransform>().anchoredPosition;
 
-                    sh.GetComponent<Outline>().effectColor = new Color32(65, 160, 234, 255);
+                    //sh.GetComponent<Outline>().effectColor = new Color32(65, 160, 234, 255);
+                    //sh.GetComponent<Image>().material.SetColor("_SolidOutline", new Color(0.254902f, 0.627451f, 0.9176471f, 1f));
+                    SilhouettesGameManager.setOutlineSetColor(sh.GetComponent<Image>().material);
 
                     sh.GetComponent<SilhouetteHolder>().SetSilhouetteName = this.gameObject.name;
 

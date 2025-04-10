@@ -42,7 +42,7 @@ public class SeparateGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
-        roundsCounterTMP.text = "Раунд: " + dataManager.Counter + " / " + dataManager.Rounds;
+        initRounds();
 
         instantiateCards();
         initInitialCardPositions();
@@ -138,16 +138,7 @@ public class SeparateGameManager : BasicGameManager
             audioSource.clip = successAudio;
             audioSource.Play();
 
-            dataManager.countRounds();
-
-            roundsCounterTMP.text = "Раунд: " + dataManager.Counter + " / " + dataManager.Rounds;
-
-            if (dataManager.checkRounds())
-            {
-                gameOverPanel.SetActive(true);
-
-                GameOver = true;
-            }
+            countRounds();
 
             setGameOver();
         }

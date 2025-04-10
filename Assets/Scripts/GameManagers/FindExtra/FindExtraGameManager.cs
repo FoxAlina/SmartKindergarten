@@ -22,7 +22,7 @@ public class FindExtraGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
-        roundsCounterTMP.text = "Раунд: " + dataManager.Counter + " / " + dataManager.Rounds;
+        initRounds();
 
         instantiateCards();
     }
@@ -85,16 +85,7 @@ public class FindExtraGameManager : BasicGameManager
     {
         playSound(Sounds.Success);
 
-        dataManager.countRounds();
-
-        roundsCounterTMP.text = "Раунд: " + dataManager.Counter + " / " + dataManager.Rounds;
-
-        if (dataManager.checkRounds())
-        {
-            gameOverPanel.SetActive(true);
-
-            GameOver = true;
-        }
+        countRounds();
 
         foreach (var card in cards)
         {
