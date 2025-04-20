@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,17 +31,20 @@ public class SilhouettesGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        initCongratsCharacter();
+
         initRounds();
 
         cleanOutlines();
         initInitialSilhouettePositions();
+        shuffleSilhouettes();
         instantiateSilhouettes();
     }
 
     public void refreshSilhouettes()
     {
         cleanOutlines();
-        setSilhouettesToIntialPositions();
+        shuffleSilhouettes();
         instantiateSilhouettes();
         refreshSetSilhouettes();
     }
@@ -53,6 +57,12 @@ public class SilhouettesGameManager : BasicGameManager
         {
             initialSilhouettePositions.Add(silhouette.GetComponent<RectTransform>().anchoredPosition);
         }
+    }
+
+    private void shuffleSilhouettes()
+    {
+        initialSilhouettePositions = initialSilhouettePositions.OrderBy(x => Random.value).ToList();
+        setSilhouettesToIntialPositions();
     }
 
     private void setSilhouettesToIntialPositions()
@@ -79,7 +89,7 @@ public class SilhouettesGameManager : BasicGameManager
             silhouettes[i].GetComponent<Silhouette>().LinkedSilhouetteHolderName = silhouetteHolders[i].gameObject.name;
 
             silhouetteHolders[i].GetComponent<Image>().sprite = sprite;
-            silhouetteHolders[i].GetComponent<Image>().color = new Color32(30, 30, 30, 255);
+            silhouetteHolders[i].GetComponent<Image>().color = new Color32(70, 70, 70, 255);
             silhouetteHolders[i].GetComponent<Image>().SetNativeSize();
             rectTransformLocal = silhouetteHolders[i].GetComponent<RectTransform>();
             rectTransformLocal.sizeDelta = new Vector2(rectTransformLocal.sizeDelta.x / spriteManager.SilhouettesScaleFactor,
@@ -142,10 +152,14 @@ public class SilhouettesGameManager : BasicGameManager
             checkButton.SetActive(false);
             refreshButton.SetActive(false);
             resetButton.SetActive(!GameOver);
+
+            StartCoroutine(setHappySadCharacter(true));
         }
         else
         {
             playFailAudio();
+
+            StartCoroutine(setHappySadCharacter());
         }
     }
 

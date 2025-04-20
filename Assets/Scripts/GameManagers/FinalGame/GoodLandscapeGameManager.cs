@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +28,11 @@ public class GoodLandscapeGameManager : BasicGameManager
     [SerializeField]
     public float distance = 10.0f;
 
-    List<(GoodLandscapeSilhouettes, Vector2)> initialSilhouettePositions;
+    int sunNumber;
+    int highNumber;
+    int middleNumber;
+    int lowNumber;
+    List<Vector2> initialSilhouettePositions;
     List<(GoodLandscapeSilhouettes, GameObject)> silhouettes;
     List<(GoodLandscapeSilhouettes, GameObject)> silhouetteHolders;
 
@@ -49,22 +54,35 @@ public class GoodLandscapeGameManager : BasicGameManager
 
         background.GetComponent<Image>().sprite = spriteManager.getRandomGLBackgroundSprite();
 
+        initCongratsCharacter();
+
         initRounds();
 
         initializeSilhouettesLists();
         initializeSilhouetteHoldersLists();
         initInitialSilhouettePositions();
+        shuffleSilhouettes();
 
         cleanOutlines();
         instantiateSilhouettes();
     }
 
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+
     public void refreshSilhouettes()
     {
         cleanOutlines();
-        setSilhouettesToIntialPositions();
+        shuffleSilhouettes();
         instantiateSilhouettes();
         refreshSetSilhouettes();
+    }
+    private void shuffleSilhouettes()
+    {
+        initialSilhouettePositions = initialSilhouettePositions.OrderBy(x => Random.value).ToList();
+        setSilhouettesToIntialPositions();
     }
 
     private void initializeSilhouettesLists()
@@ -119,31 +137,37 @@ public class GoodLandscapeGameManager : BasicGameManager
 
     protected void initInitialSilhouettePositions()
     {
-        initialSilhouettePositions = new List<(GoodLandscapeSilhouettes, Vector2)>();
+        initialSilhouettePositions = new List<Vector2>();
+
+        sunNumber = sunSilhouettes.Count;
+        highNumber = highSilhouettes.Count;
+        middleNumber = middleSilhouettes.Count;
+        lowNumber = lowSilhouettes.Count;
 
         foreach (var silhouette in sunSilhouettes)
         {
-            initialSilhouettePositions.Add((GoodLandscapeSilhouettes.Sun, silhouette.GetComponent<RectTransform>().anchoredPosition));
+            initialSilhouettePositions.Add(silhouette.GetComponent<RectTransform>().anchoredPosition);
         }
 
         foreach (var silhouette in highSilhouettes)
         {
-            initialSilhouettePositions.Add((GoodLandscapeSilhouettes.High, silhouette.GetComponent<RectTransform>().anchoredPosition));
+            initialSilhouettePositions.Add(silhouette.GetComponent<RectTransform>().anchoredPosition);
         }
 
         foreach (var silhouette in middleSilhouettes)
         {
-            initialSilhouettePositions.Add((GoodLandscapeSilhouettes.Middle, silhouette.GetComponent<RectTransform>().anchoredPosition));
+            initialSilhouettePositions.Add(silhouette.GetComponent<RectTransform>().anchoredPosition);
         }
 
         foreach (var silhouette in lowSilhouettes)
         {
-            initialSilhouettePositions.Add((GoodLandscapeSilhouettes.Low, silhouette.GetComponent<RectTransform>().anchoredPosition));
+            initialSilhouettePositions.Add(silhouette.GetComponent<RectTransform>().anchoredPosition);
         }
     }
 
     private void setSilhouettesToIntialPositions()
     {
+        GoodLandscapeSilhouettes silhouetteType = GoodLandscapeSilhouettes.Sun;
         int sunSilhouettesCounter = 0;
         int highSilhouettesCounter = 0;
         int middleSilhouettesCounter = 0;
@@ -151,24 +175,43 @@ public class GoodLandscapeGameManager : BasicGameManager
 
         for (int i = 0; i < initialSilhouettePositions.Count; i++)
         {
-            switch (initialSilhouettePositions[i].Item1)
+            switch (silhouetteType)
             {
                 case GoodLandscapeSilhouettes.Sun:
-                    sunSilhouettes[sunSilhouettesCounter].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i].Item2;
+                    sunSilhouettes[sunSilhouettesCounter].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i];
                     sunSilhouettesCounter++;
                     break;
                 case GoodLandscapeSilhouettes.High:
-                    highSilhouettes[highSilhouettesCounter].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i].Item2;
+                    highSilhouettes[highSilhouettesCounter].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i];
                     highSilhouettesCounter++;
                     break;
                 case GoodLandscapeSilhouettes.Middle:
-                    middleSilhouettes[middleSilhouettesCounter].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i].Item2;
+                    middleSilhouettes[middleSilhouettesCounter].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i];
                     middleSilhouettesCounter++;
                     break;
                 case GoodLandscapeSilhouettes.Low:
-                    lowSilhouettes[lowSilhouettesCounter].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i].Item2;
+                    lowSilhouettes[lowSilhouettesCounter].GetComponent<RectTransform>().anchoredPosition = initialSilhouettePositions[i];
                     lowSilhouettesCounter++;
                     break;
+            }
+
+            if (sunSilhouettesCounter == sunNumber
+                && highSilhouettesCounter == 0)
+            {
+                silhouetteType = GoodLandscapeSilhouettes.High;
+            }
+
+            if (highSilhouettesCounter == highNumber
+                && middleSilhouettesCounter == 0)
+            {
+                silhouetteType = GoodLandscapeSilhouettes.Middle;
+            }
+
+
+            if (middleSilhouettesCounter == middleNumber
+                && lowSilhouettesCounter == 0)
+            {
+                silhouetteType = GoodLandscapeSilhouettes.Low;
             }
         }
     }
@@ -189,7 +232,7 @@ public class GoodLandscapeGameManager : BasicGameManager
             silhouettes[i].Item2.GetComponent<GLSilhouette>().LinkedSilhouetteHolderName = silhouetteHolders[i].Item2.gameObject.name;
 
             silhouetteHolders[i].Item2.GetComponent<Image>().sprite = sprite;
-            silhouetteHolders[i].Item2.GetComponent<Image>().color = new Color32(30, 30, 30, 255);
+            silhouetteHolders[i].Item2.GetComponent<Image>().color = new Color32(70, 70, 70, 255);
             silhouetteHolders[i].Item2.GetComponent<Image>().SetNativeSize();
             rectTransformLocal = silhouetteHolders[i].Item2.GetComponent<RectTransform>();
             rectTransformLocal.sizeDelta = new Vector2(rectTransformLocal.sizeDelta.x / spriteManager.SilhouettesScaleFactor,
@@ -252,10 +295,14 @@ public class GoodLandscapeGameManager : BasicGameManager
             checkButton.SetActive(false);
             refreshButton.SetActive(false);
             resetButton.SetActive(!GameOver);
+
+            StartCoroutine(setHappySadCharacter(true));
         }
         else
         {
             playFailAudio();
+
+            StartCoroutine(setHappySadCharacter());
         }
     }
 

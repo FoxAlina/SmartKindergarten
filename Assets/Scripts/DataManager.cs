@@ -8,7 +8,9 @@ public class DataManager : MonoBehaviour
     int initialRounds;
 
     public int Rounds { get; set; }
-    public int Counter { get; set; }
+    public int RoundsCounter { get; set; }
+
+    public int EntryLevel { get; set; }
 
     private void Awake()
     {
@@ -20,6 +22,8 @@ public class DataManager : MonoBehaviour
 
             PlayerPrefs.SetInt("Rounds", Rounds);
         }
+
+        EntryLevel = PlayerPrefs.GetInt("EntryLevel");
     }
 
     public void saveRounds(int _value)
@@ -31,11 +35,18 @@ public class DataManager : MonoBehaviour
 
     public void countRounds()
     {
-        Counter++;
+        RoundsCounter++;
     }
 
     public bool checkRounds()
     {
-        return Rounds == Counter;
+        return Rounds == RoundsCounter;
+    }
+
+    public void countEntries()
+    {
+        EntryLevel++;
+
+        PlayerPrefs.SetInt("EntryLevel", EntryLevel);
     }
 }

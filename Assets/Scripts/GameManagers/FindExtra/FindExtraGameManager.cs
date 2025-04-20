@@ -22,6 +22,8 @@ public class FindExtraGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        initCongratsCharacter();
+
         initRounds();
 
         instantiateCards();
@@ -47,8 +49,6 @@ public class FindExtraGameManager : BasicGameManager
 
             card.transform.GetChild(0).GetComponent<Image>().sprite = sprite;
             card.GetComponent<FindExtraCard>().IsExtra = isExtra;
-
-            Debug.Log(amountOfEachGroup + " " + i);
 
             i++;
         }
@@ -100,6 +100,8 @@ public class FindExtraGameManager : BasicGameManager
         checkButton.SetActive(false);
         refreshButton.SetActive(false);
         resetButton.SetActive(!GameOver);
+
+        StartCoroutine(setHappySadCharacter(true));
     }
 
     private void fail()
@@ -113,6 +115,8 @@ public class FindExtraGameManager : BasicGameManager
                 setCardHolderSprite(card, CardSetSuccessFail.Fail);
             }
         }
+
+        StartCoroutine(setHappySadCharacter());
     }
 
     private void setEnableCards(bool _enable)

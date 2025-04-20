@@ -26,6 +26,8 @@ public class SpriteManager : MonoBehaviour
     [SerializeField]
     Sprite cardFail;
     [SerializeField]
+    List<Sprite> puzzles;
+    [SerializeField]
     List<Sprite> backgroundSprites;
     [SerializeField]
     List<Sprite> glSuns;
@@ -35,6 +37,16 @@ public class SpriteManager : MonoBehaviour
     List<Sprite> glMiddles;
     [SerializeField]
     List<Sprite> glLows;
+    [SerializeField]
+    Sprite happyCharacter;
+    [SerializeField]
+    Sprite sadCharacter;
+    [SerializeField]
+    Sprite idleCharacter;
+    [SerializeField]
+    List<Sprite> congratsCharacters;
+    [SerializeField]
+    protected float congratsScaleRate;
 
     public Sprite CardHolder
     {
@@ -44,6 +56,11 @@ public class SpriteManager : MonoBehaviour
     public int SilhouettesScaleFactor
     {
         get { return silhouettesScaleFactor; }
+    }
+
+    public float CongratsScaleRate
+    {
+        get { return congratsScaleRate; }
     }
 
     public Sprite CardSet
@@ -59,6 +76,26 @@ public class SpriteManager : MonoBehaviour
     public Sprite CardFail
     {
         get { return cardFail; }
+    }
+
+    public Sprite getHappyIdleSad(HappySadIdle _happySadIdle)
+    {
+        Sprite ret = defaultSprite;
+
+        switch (_happySadIdle)
+        {
+            case HappySadIdle.Happy:
+                ret = happyCharacter;
+                break;
+            case HappySadIdle.Idle:
+                ret = idleCharacter;
+                break;
+            case HappySadIdle.Sad:
+                ret = sadCharacter;
+                break;
+        }
+
+        return ret;
     }
 
     public Sprite getRandomCardSprite(bool _isGood)
@@ -141,6 +178,28 @@ public class SpriteManager : MonoBehaviour
         backgroundSprites = backgroundSprites.OrderBy(x => Random.value).ToList();
 
         ret = backgroundSprites[Random.Range(0, backgroundSprites.Count)];
+
+        return ret;
+    }
+
+    public Sprite getRandomPuzzle()
+    {
+        Sprite ret;
+
+        puzzles = puzzles.OrderBy(x => Random.value).ToList();
+
+        ret = puzzles[Random.Range(0, puzzles.Count)];
+
+        return ret;
+    }
+
+    public Sprite getRandomCongratsCharacter()
+    {
+        Sprite ret;
+
+        congratsCharacters = congratsCharacters.OrderBy(x => Random.value).ToList();
+
+        ret = congratsCharacters[Random.Range(0, congratsCharacters.Count)];
 
         return ret;
     }

@@ -6,6 +6,10 @@ public class MainMenuGameManager : MonoBehaviour
 {
     [SerializeField]
     TMP_InputField inputField;
+    [SerializeField]
+    GameObject mainMenuPanel;
+    [SerializeField]
+    GameObject exceedEntryLevelPanel;
 
     DataManager dataManager;
 
@@ -14,6 +18,18 @@ public class MainMenuGameManager : MonoBehaviour
         dataManager = GetComponent<DataManager>();
 
         inputField.text = dataManager.Rounds.ToString();
+
+        mainMenuPanel.SetActive(GameSceneHistory.PreviousSceneBuildIndex == 0);
+
+        if (GameSceneHistory.PreviousSceneBuildIndex == 0)
+        {
+            dataManager.countEntries();
+
+            if (dataManager.EntryLevel == 30)
+            {
+                exceedEntryLevelPanel.SetActive(true);
+            }
+        }
     }
 
     public void setRoundNumber(string _value)

@@ -19,6 +19,8 @@ public class ChooseGoodBadGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        initCongratsCharacter();
+
         initRounds();
 
         initiateCard();
@@ -78,6 +80,8 @@ public class ChooseGoodBadGameManager : BasicGameManager
         refreshButton.SetActive(false);
         goodButton.SetActive(false);
         badButton.SetActive(false);
+
+        StartCoroutine(setHappySadCharacter(true));
     }
 
     private void fail()
@@ -86,6 +90,8 @@ public class ChooseGoodBadGameManager : BasicGameManager
         audioSource.Play();
 
         card.GetComponent<Image>().sprite = spriteManager.CardFail;
+
+        StartCoroutine(setHappySadCharacter());
     }
 
     public void restart()

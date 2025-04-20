@@ -42,6 +42,8 @@ public class SeparateGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        initCongratsCharacter();
+
         initRounds();
 
         instantiateCards();
@@ -141,11 +143,15 @@ public class SeparateGameManager : BasicGameManager
             countRounds();
 
             setGameOver();
+
+            StartCoroutine(setHappySadCharacter(true));
         }
         else
         {
             audioSource.clip = failAudioClip;
             audioSource.Play();
+
+            StartCoroutine(setHappySadCharacter());
         }
     }
 

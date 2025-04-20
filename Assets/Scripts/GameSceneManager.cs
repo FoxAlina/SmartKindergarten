@@ -7,6 +7,8 @@ public class GameSceneManager : MonoBehaviour
 {
     public void loadScene(string _sceneName)
     {
+        GameSceneHistory.PreviousSceneBuildIndex = SceneManager.GetActiveScene().buildIndex;
+
         SceneManager.LoadScene(_sceneName);
     }
 }
