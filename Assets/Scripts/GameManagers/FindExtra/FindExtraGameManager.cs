@@ -22,6 +22,8 @@ public class FindExtraGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        this.playExplanationAudio();
+
         initCongratsCharacter();
 
         initRounds();

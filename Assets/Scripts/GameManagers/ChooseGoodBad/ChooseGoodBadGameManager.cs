@@ -19,6 +19,8 @@ public class ChooseGoodBadGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        this.playExplanationAudio();
+
         initCongratsCharacter();
 
         initRounds();

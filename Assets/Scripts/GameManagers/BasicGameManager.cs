@@ -8,11 +8,16 @@ public class BasicGameManager : MonoBehaviour
     [SerializeField]
     protected AudioSource audioSource;
     [SerializeField]
+    protected AudioSource gameOverAudioSource;
+    [SerializeField]
     protected AudioClip setCardAudio;
     [SerializeField]
     protected AudioClip successAudio;
     [SerializeField]
     protected AudioClip failAudioClip;
+
+    [SerializeField]
+    private AudioClip explanationAudio;
 
     [SerializeField]
     protected GameObject checkButton;
@@ -25,6 +30,8 @@ public class BasicGameManager : MonoBehaviour
     protected TMP_Text roundsCounterTMP;
     [SerializeField]
     protected GameObject gameOverPanel;
+    [SerializeField]
+    protected AudioClip gameOverPanelAudio;
     [SerializeField]
     protected GameObject congratsCharacter;
 
@@ -63,6 +70,9 @@ public class BasicGameManager : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
 
+            gameOverAudioSource.clip = gameOverPanelAudio;
+            gameOverAudioSource.PlayDelayed(1f);
+
             GameOver = true;
         }
     }
@@ -74,5 +84,16 @@ public class BasicGameManager : MonoBehaviour
         yield return new WaitForSeconds(happySeconds);
 
         character.GetComponent<Image>().sprite = spriteManager.getHappyIdleSad(HappySadIdle.Idle);
+    }
+
+    protected void playExplanationAudio()
+    {
+        audioSource.clip = explanationAudio;
+        audioSource.PlayDelayed(1f);
+    }
+
+    public void stopAudio()
+    {
+        audioSource.Stop();
     }
 }

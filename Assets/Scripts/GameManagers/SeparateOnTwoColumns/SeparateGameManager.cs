@@ -42,6 +42,8 @@ public class SeparateGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        this.playExplanationAudio();
+
         initCongratsCharacter();
 
         initRounds();
@@ -68,15 +70,28 @@ public class SeparateGameManager : BasicGameManager
         int amountOfEachGroup = cards.Count / 2;
 
         //cards = cards.OrderBy(x => Random.value).ToList(); // if shuffle then need to save names to reset initial position on refresh/restart
+        
+        bool[] goodBadArray = new bool[cards.Count];
 
-        foreach (var card in cards)
+        for (int k = 0; k < cards.Count; k++)
         {
-            isGood = (i <= amountOfEachGroup);
+            goodBadArray[k] = i <= amountOfEachGroup;
+
+            i++;
+        }
+
+        goodBadArray = goodBadArray.ToList<bool>().OrderBy(x => Random.value).ToArray<bool>();
+
+        i = 1;
+
+        for (int k = 0; k < cards.Count; k++)
+        {
+            isGood = goodBadArray[k];
 
             sprite = spriteManager.getRandomCardSprite(isGood);
 
-            card.transform.GetChild(0).GetComponent<Image>().sprite = sprite;
-            card.GetComponent<SeparateCard>().IsGoodCard = isGood;
+            cards[k].transform.GetChild(0).GetComponent<Image>().sprite = sprite;
+            cards[k].GetComponent<SeparateCard>().IsGoodCard = isGood;
 
             i++;
         }

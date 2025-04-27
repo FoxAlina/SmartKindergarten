@@ -27,6 +27,8 @@ public class PuzzleGameManager : BasicGameManager
         spriteManager = GetComponent<SpriteManager>();
         dataManager = GetComponent<DataManager>();
 
+        this.playExplanationAudio();
+
         initCongratsCharacter();
 
         initPuzzlePiecesHolders();

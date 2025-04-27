@@ -54,6 +54,8 @@ public class GoodLandscapeGameManager : BasicGameManager
 
         background.GetComponent<Image>().sprite = spriteManager.getRandomGLBackgroundSprite();
 
+        this.playExplanationAudio();
+
         initCongratsCharacter();
 
         initRounds();

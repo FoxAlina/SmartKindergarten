@@ -25,7 +25,7 @@ public class MainMenuGameManager : MonoBehaviour
         {
             dataManager.countEntries();
 
-            if (dataManager.EntryLevel == 30)
+            if (dataManager.EntryLevel == 70)
             {
                 exceedEntryLevelPanel.SetActive(true);
             }
